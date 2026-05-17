@@ -70,22 +70,49 @@ residual_plots <- function(
 
   dens_df <- data.frame(
     x = dens$x,
-    y = dens$y
+    y = dens$y,
+    type = "Estimated density"
   )
 
-  p2 <- ggplot(dens_df, aes(x = x, y = y)) +
-    geom_line(linewidth = 0.8) +
-    stat_function(
-      fun = dnorm,
-      args = list(mean = 0, sd = 1),
-      linetype = 2,
-      linewidth = 0.8,
-      xlim = c(-5, 5)
-    ) +
-    labs(x = "Range", y = "Density") +
-    coord_cartesian(xlim = c(-4.5, 4.5)) +
-    theme_residuals
+  norm_df <- data.frame(
+    x = dens$x,
+    y = dnorm(dens$x, mean = 0, sd = 1),
+    type = "Standard density"
+  )
 
+  p2 <- ggplot() +
+
+    geom_line(
+      data = dens_df,
+      aes(x = x, y = y, linetype = type),
+      linewidth = 0.8
+    ) +
+
+    geom_line(
+      data = norm_df,
+      aes(x = x, y = y, linetype = type),
+      linewidth = 0.8
+    ) +
+
+    scale_linetype_manual(
+      values = c(
+        "Estimated density" = "solid",
+        "Standard density" = "dashed"
+      ),
+      name = NULL
+    ) +
+
+    labs(x = "Range", y = "Density") +
+
+    coord_cartesian(xlim = c(-4.5, 4.5), ylim = c(0, 0.5)) +
+
+    theme_residuals +
+
+    theme(
+      legend.position = c(0.25, 0.83),
+      legend.text = element_text(size = 8),
+      legend.background = element_blank(),
+    )
   # Plot 3: Residuals vs Fitted
   p3 <- ggplot(
     data.frame(fitted = yfitted, res = res),
@@ -113,10 +140,38 @@ residual_plots <- function(
 
   # Save plots if requested
   if (save_pdf) {
-    ggsave("residual_vs_index.pdf", p1, width = 4, height = 4)
-    ggsave("density_plot.pdf", p2, width = 4, height = 4)
-    ggsave("residual_vs_fitted.pdf", p3, width = 4, height = 4)
-    ggsave("simulation_envelope.pdf", p4, width = 4, height = 4)
+    ggsave(
+      "residual_vs_index.pdf",
+      p1,
+      width = 90,
+      height = 65,
+      units = "mm",
+      device = cairo_pdf
+    )
+    ggsave(
+      "density_plot.pdf",
+      p2,
+      width = 90,
+      height = 65,
+      units = "mm",
+      device = cairo_pdf
+    )
+    ggsave(
+      "residual_vs_fitted.pdf",
+      p3,
+      width = 90,
+      height = 65,
+      units = "mm",
+      device = cairo_pdf
+    )
+    ggsave(
+      "simulation_envelope.pdf",
+      p4,
+      width = 90,
+      height = 65,
+      units = "mm",
+      device = cairo_pdf
+    )
   }
 
   return(list(
