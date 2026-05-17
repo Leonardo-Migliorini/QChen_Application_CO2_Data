@@ -21,7 +21,7 @@ source("Model Implementation\\Residual_analysis.R")
 # Import data
 # ==============================================================================
 
-data <- read.csv("Data_2018\\data_2018.csv")
+data <- read.csv("data_2018.csv")
 
 # ==============================================================================
 # Data exploration and descriptive statistics
@@ -75,13 +75,14 @@ histogram <- ggplot2::ggplot(data, ggplot2::aes(x = CO2)) +
 histogram
 
 # Uncomment the line below to save the histogram plot
-# ggplot2::ggsave(
-#     filename = "histogram.pdf",
-#     plot = histogram,
-#     width = 6,
-#     height = 4,
-#     dpi = 300
-# )
+ggplot2::ggsave(
+    filename = "histogram.pdf",
+    plot = histogram,
+    width = 90,
+    height = 65,
+    units = "mm",
+    device = cairo_pdf
+)
 
 # ==============================================================================
 # Main model fitting
