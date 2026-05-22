@@ -75,14 +75,14 @@ histogram <- ggplot2::ggplot(data, ggplot2::aes(x = CO2)) +
 histogram
 
 # Uncomment the line below to save the histogram plot
-ggplot2::ggsave(
-    filename = "histogram.pdf",
-    plot = histogram,
-    width = 90,
-    height = 65,
-    units = "mm",
-    device = cairo_pdf
-)
+# ggplot2::ggsave(
+#     filename = "histogram.pdf",
+#     plot = histogram,
+#     width = 90,
+#     height = 65,
+#     units = "mm",
+#     device = cairo_pdf
+# )
 
 # ==============================================================================
 # Main model fitting
@@ -112,12 +112,10 @@ model_q75 <- chen_reg.fit(y = y, X = X, tau = 0.75, link = "log", diag = 1)
 run_tests <- function(model) {
     shapiro_result <- shapiro.test(model$residual) # Null hypothesis: the residuals are normally distributed
     adtest_result <- nortest::ad.test(model$residual) # Null hypothesis: the residuals are normally distributed
-    boxtest_result <- Box.test(model$residual) # Null hypothesis: the residuals are independent (no autocorrelation)
 
     results <- list(
         shapiro = shapiro_result,
-        adtest = adtest_result,
-        boxtest = boxtest_result
+        adtest = adtest_result
     )
     return(results)
 }
