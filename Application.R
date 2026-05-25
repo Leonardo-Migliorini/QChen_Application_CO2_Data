@@ -61,7 +61,7 @@ histogram <- ggplot2::ggplot(data, ggplot2::aes(x = CO2)) +
         linewidth = 1
     ) +
     ggplot2::labs(
-        x = "Carbon dioxide emission (t/pc)",
+        x = "Carbon dioxide emission (t/capita)",
         y = "Estimated Density"
     ) +
     ggplot2::coord_cartesian(xlim = c(0, 40), ylim = c(0, 0.2)) +
