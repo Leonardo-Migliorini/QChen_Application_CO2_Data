@@ -14,9 +14,10 @@
 # =============================================================================
 
 source("Model Implementation\\chen_functions.R")
-source("Model Implementation\\chen_qr_fit_formatado.R")
-source("Model Implementation\\Residual_analysis_chen_qr.R")
-source("Model Implementation\\Hypothesis_Tests.R")
+# source("Model Implementation\\chen_qr_fit2.R")
+source("Model Implementation\\chen_qr_fit3.R")
+# source("Model Implementation\\Residual_analysis2.R")
+source("Model Implementation\\Residual_analysis4.R")
 
 # ==============================================================================
 # Import data
@@ -95,15 +96,24 @@ histogram
 # Main model fitting
 # ==============================================================================
 
+colnames(data)
+
 y <- data$CO2
+X0 <- as.matrix(rep(1, dim(data)[1]))
 
 # 1st quartile model
 
-X <- cbind(1, data$DGCC, data$DOCC, data$UCAC)
-Z <- cbind(1, data$DOCC)
-Z <- as.matrix(rep(1, dim(data)[1]))
+X1 <- cbind(1, data$DGCC, data$DOCC, data$UCAC)
+X2 <- cbind(1, data$OR)
 
-model_q25 <- chen_qr_fit(y = y, X = X, Z = Z, tau = 0.25)
+# model_q25 <- chen_qr_fit(y = y, X = X1, Z = X0, tau = 0.25)
+model_q25 <- chen_qr_fit(
+  y = y,
+  X = X1,
+  Z = X0,
+  tau = 0.25,
+  lambda.link = "identity"
+)
 
 # Median model
 
@@ -111,13 +121,28 @@ X <- cbind(1, data$DGCC, data$DOCC, data$UCAC)
 Z <- cbind(1, data$DOCC)
 
 model_q50 <- chen_qr_fit(y = y, X = X, Z = Z, tau = 0.5)
+model_q50 <- chen_qr_fit(
+  y = y,
+  X = X,
+  Z = X0,
+  tau = 0.5,
+  lambda.link = "identity"
+)
 
 # 3rd quartile model
 
 X <- cbind(1, data$DGCC, data$DOCC, data$UCAC)
-Z <- cbind(1, data$DGCC, data$DOCC, data$UCAC)
+# Z <- cbind(1, data$OR)
+Z <- cbind(1, data$DOCC)
 
 model_q75 <- chen_qr_fit(y = y, X = X, Z = Z, tau = 0.75)
+model_q75 <- chen_qr_fit(
+  y = y,
+  X = X,
+  Z = X0,
+  tau = 0.75,
+  lambda.link = "identity"
+)
 
 # ==============================================================================
 # Residual diagnostics
@@ -139,11 +164,9 @@ run_tests <- function(model) {
 residual_plots(model_q25, save_pdf = FALSE)
 run_tests(model_q25)
 
-
 # Median model
 residual_plots(model_q50, save_pdf = FALSE)
 run_tests(model_q50)
-autocorr_test(model_q50$residuals, lag = 20)
 
 # 3rd quartile model
 residual_plots(model_q75, save_pdf = FALSE)
